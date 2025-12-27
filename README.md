@@ -1,158 +1,302 @@
 # Bitcoin Price Prediction
 
-A comprehensive machine learning project for predicting Bitcoin prices using multiple advanced models and sophisticated feature engineering techniques.
+A machine learning pipeline for predicting Bitcoin prices using multiple data sources, advanced feature engineering, and diverse model architectures including traditional ML, deep learning, ensemble methods, and reinforcement learning.
 
-## 📊 Project Overview
+## What This Does
 
-This project implements a complete end-to-end machine learning pipeline for Bitcoin price prediction, from data collection through model training to evaluation and visualization. It leverages multiple data sources, advanced feature engineering techniques, and a variety of machine learning models to provide accurate price predictions and market insights.
+- Collects historical Bitcoin price data from multiple sources (Binance, CCXT, CryptoCompare, Yahoo Finance) with automatic fallback
+- Engineers 100+ features including technical indicators, price patterns, and market regime detection
+- Trains and compares multiple model types: traditional ML (Random Forest, XGBoost, CatBoost, etc.), deep learning (LSTM, GRU), ensemble methods, and reinforcement learning (PPO, A2C)
+- Evaluates models using comprehensive metrics (RMSE, MAE, directional accuracy) and generates interactive visualizations
+- Provides a modular, extensible pipeline that can run end-to-end or execute individual stages independently
 
-### Key Components:
+## Architecture
 
-1. **Data Collection** - Multi-source historical Bitcoin price data acquisition
-2. **Data Preprocessing** - Cleaning, normalization, and preparation
-3. **Feature Engineering** - Technical indicators, market regimes, and price patterns
-4. **Model Training** - Traditional ML, deep learning, ensemble, and reinforcement learning approaches
-5. **Model Evaluation** - Comprehensive comparison metrics
-6. **Visualization** - Interactive charts and analysis dashboards
+```
+┌─────────────┐
+│ Data Sources│  (Binance, CCXT, CryptoCompare, Yahoo Finance)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Collector  │  → Raw Data (CSV)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Preprocessor│  → Processed Data (CSV)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   Engineer  │  → Featured Data (CSV) [100+ features]
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   Training  │  → Models (PKL/H5)
+│  (Multiple) │     • Traditional ML
+│             │     • Deep Learning
+│             │     • Ensemble
+│             │     • Reinforcement Learning
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Evaluation  │  → Metrics & Visualizations
+└─────────────┘
+```
 
-## 🌟 Features
+## Key Features
 
-- **Multi-source Data Collection**: Fetches data from Binance, CryptoCompare, CCXT, and Yahoo Finance
-- **Extensive Feature Engineering**: Creates 100+ features including technical indicators, price patterns, and market regimes
-- **Multiple Model Implementation**: Implements and compares traditional ML, deep learning, ensemble, and RL models
-- **Robust Evaluation Framework**: Evaluates using RMSE, MAE, directional accuracy, and more
-- **Interactive Visualizations**: Generates candlestick charts, technical indicators, performance comparisons
-- **Market Regime Detection**: Identifies different market states for adaptive trading strategies
-- **Anomaly Detection**: Identifies unusual price patterns and potential market opportunities
+- **Multi-source data collection** with automatic failover
+- **Comprehensive feature engineering** (RSI, MACD, Bollinger Bands, ATR, OBV, Ichimoku, and more)
+- **Diverse model portfolio** covering traditional ML, deep learning, ensemble, and RL approaches
+- **Robust evaluation framework** with multiple metrics and visualization capabilities
+- **Modular design** allowing independent execution of pipeline stages
+- **Configurable parameters** via centralized configuration file
 
-## 🧠 Models Implemented
+## Tech Stack
 
-### Traditional Machine Learning
-- Random Forest
-- Gradient Boosting
-- XGBoost
-- LightGBM
-- CatBoost
+- **Language**: Python 3.8+
+- **Data Processing**: pandas, numpy
+- **ML Libraries**: scikit-learn, XGBoost, LightGBM, CatBoost
+- **Deep Learning**: TensorFlow, Keras
+- **Reinforcement Learning**: stable-baselines3, gym
+- **Data Sources**: ccxt, python-binance, yfinance, cryptocmd
+- **Technical Analysis**: pandas-ta
+- **Visualization**: matplotlib, seaborn, plotly
+- **Utilities**: requests
 
-### Deep Learning
-- LSTM (Long Short-Term Memory)
-- GRU (Gated Recurrent Unit)
-- Bidirectional LSTM
+## Repository Structure
 
-### Ensemble Methods
-- Voting Ensemble
-- Stacking Ensemble
-- Blending Ensemble
+```
+bitcoin_prediction_project/
+├── config/
+│   └── config.py              # Centralized configuration
+├── data/                       # Data storage (CSV files)
+├── models/                     # Trained model files (.pkl, .h5)
+├── logs/                       # Application logs
+├── scripts/                    # Standalone execution scripts
+│   ├── collect_data.py
+│   ├── preprocess_data.py
+│   ├── engineer_features.py
+│   ├── train_models.py
+│   ├── evaluate_models.py
+│   └── visualize_data.py
+├── src/                        # Source code modules
+│   ├── data/
+│   │   ├── collector.py       # Data collection logic
+│   │   ├── preprocessor.py    # Data preprocessing
+│   │   └── engineer.py        # Feature engineering
+│   ├── models/
+│   │   ├── traditional.py     # Traditional ML models
+│   │   ├── deep_learning.py    # LSTM, GRU models
+│   │   ├── ensemble.py        # Ensemble methods
+│   │   └── rl.py              # Reinforcement learning
+│   ├── evaluation/
+│   │   ├── evaluator.py       # Model evaluation
+│   │   └── visualizer.py      # Visualization
+│   └── utils/
+│       └── helpers.py          # Utility functions
+├── main.py                     # Main entry point
+├── collect_data.py             # Data collection CLI
+├── requirements.txt            # Python dependencies
+└── README.md
+```
 
-### Reinforcement Learning
-- PPO (Proximal Policy Optimization)
-- A2C (Advantage Actor-Critic)
-
-## 🗂️ Project Structure
-bitcoin-price-prediction/
-├── config/                     # Configuration parameters
-│   └── config.py               # Project-wide settings
-├── data/                       # Data storage directory
-├── logs/                       # Log files
-├── models/                     # Trained model files
-├── results/                    # Evaluation results and visualizations
-├── scripts/                    # Execution scripts
-│   ├── collect_data.py         # Data collection script
-│   ├── preprocess_data.py      # Data preprocessing
-│   ├── engineer_features.py    # Feature engineering
-│   ├── train_models.py         # Model training
-│   ├── evaluate_models.py      # Model evaluation
-│   └── visualize_data.py       # Data visualization
-├── src/                        # Source code
-│   ├── data/                   # Data handling modules
-│   │   ├── collector.py        # Data collection
-│   │   ├── engineer.py         # Feature engineering
-│   │   └── preprocessor.py     # Data preprocessing
-│   ├── models/                 # Model implementations
-│   │   ├── traditional.py      # Traditional ML models
-│   │   ├── deep_learning.py    # Deep learning models
-│   │   ├── ensemble.py         # Ensemble models
-│   │   └── rl.py               # Reinforcement learning
-│   ├── evaluation/             # Evaluation modules
-│   │   ├── evaluator.py        # Model evaluation
-│   │   └── visualizer.py       # Results visualization
-│   └── utils/                  # Utility functions
-│       └── helpers.py          # Helper functions
-├── main.py                     # Main execution script
-├── requirements.txt            # Project dependencies
-└── README.md                   # Project documentation
-
-## 🔍 Key Findings
-
-Analysis of various models shows:
-
-- **Best Overall Model**: Stacking Ensemble combining gradient boosting models
-- **Highest Accuracy**: CatBoost with custom feature engineering
-- **Most Important Features**: RSI, Bollinger Bands, and volume momentum indicators
-- **Directional Accuracy**: Up to 75% accuracy in predicting price movement direction
-- **Market Regimes**: Performance varies significantly across different market regimes
-
-Check the `results/` directory for detailed visualizations and performance metrics.
-
-## 🚀 Getting Started
+## Quickstart
 
 ### Prerequisites
 
-- Python 3.8+
-- Required libraries (see requirements.txt)
+- Python 3.8 or higher
+- pip package manager
 
-### Installation
+### Setup
 
+1. Clone the repository:
 ```bash
-# Clone this repository
-git clone https://github.com/Manith-s/Bitcoin-price-prediction.git
-cd Bitcoin-price-prediction
+git clone <repository-url>
+cd bitcoin_prediction_project
+```
 
-# Install dependencies
+2. Create a virtual environment (recommended):
+```bash
+python -m venv venv
+
+# On Windows
+venv\Scripts\activate
+
+# On Linux/Mac
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
 pip install -r requirements.txt
+```
 
-Usage
-Running the Full Pipeline
-# Run the entire pipeline from data collection to visualization
+### Run
+
+**Full pipeline** (data collection → preprocessing → feature engineering → training → evaluation → visualization):
+```bash
 python main.py --mode full
+```
 
-# Data collection
-python scripts/collect_data.py --symbol BTC --quote USD --interval 1d
+**Individual stages**:
+```bash
+# Data collection only
+python main.py --mode collect
 
-# Data preprocessing
+# Preprocessing only
+python main.py --mode preprocess
+
+# Feature engineering only
+python main.py --mode engineer
+
+# Training (all model types)
+python main.py --mode train
+
+# Training specific model types
+python main.py --mode train-traditional
+python main.py --mode train-deep-learning
+python main.py --mode train-ensemble
+
+# Evaluation
+python main.py --mode evaluate
+
+# Visualization
+python main.py --mode visualize --show_plots
+```
+
+**Using standalone scripts**:
+```bash
+# Collect data
+python collect_data.py --symbol BTC --quote USD --interval 1d --start_date 2015-01-01
+
+# Preprocess
 python scripts/preprocess_data.py
 
-# Feature engineering
+# Engineer features
 python scripts/engineer_features.py
 
-# Model training (all models)
-python scripts/train_models.py
+# Train models
+python scripts/train_models.py --model-type all
 
-# Model training (specific model type)
-python scripts/train_models.py --model-type deep-learning
+# Evaluate models
+python scripts/evaluate_models.py
 
-# Model evaluation
-python scripts/evaluate_models.py --summary-report
+# Visualize
+python scripts/visualize_data.py
+```
 
-# Data visualization
-python scripts/visualize_data.py --visualization-type all
+## Configuration
 
-📈 Example Results
-The project generates various visualizations to help understand Bitcoin price dynamics and model performance:
+Configuration is managed in `config/config.py`. Key parameters:
 
-Price history and volume analysis
-Technical indicator effectiveness
-Model performance comparisons
-Feature importance analysis
-Market regime classification
-Interactive dashboards for exploration
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `CRYPTO_SYMBOL` | `"BTC"` | Cryptocurrency symbol |
+| `QUOTE_CURRENCY` | `"USD"` | Quote currency |
+| `TIME_INTERVAL` | `"1d"` | Data interval (1d, 1h, 15m, etc.) |
+| `START_DATE` | `"2015-01-01"` | Start date for data collection |
+| `TEST_SIZE` | `0.2` | Test set size ratio |
+| `VAL_SIZE` | `0.1` | Validation set size ratio |
+| `EPOCHS` | `100` | Training epochs for deep learning |
+| `BATCH_SIZE` | `64` | Batch size for training |
+| `LEARNING_RATE` | `0.001` | Learning rate |
 
-📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Data sources are tried in order: Binance → CCXT → CryptoCompare → Yahoo Finance. No API keys required for default usage.
 
-🔗 Additional Resources
-Bitcoin Data Sources
-Technical Analysis Indicators
-Machine Learning for Trading
+## Usage
 
+### Command-Line Arguments
 
+**main.py** supports the following arguments:
+- `--mode`: Pipeline mode (`full`, `collect`, `preprocess`, `engineer`, `train`, `evaluate`, `visualize`, `train-traditional`, `train-deep-learning`, `train-ensemble`)
+- `--symbol`: Cryptocurrency symbol (default: BTC)
+- `--quote`: Quote currency (default: USD)
+- `--interval`: Time interval (default: 1d)
+- `--start_date`: Start date (YYYY-MM-DD)
+- `--end_date`: End date (YYYY-MM-DD, defaults to today)
+- `--verbose`: Enable verbose logging
+- `--show_plots`: Display plots during visualization
+
+### Data Flow
+
+1. **Raw Data**: Collected from exchanges → `data/BTC_USD_1d_raw.csv`
+2. **Processed Data**: Cleaned and normalized → `data/BTC_USD_1d_processed.csv`
+3. **Featured Data**: With 100+ engineered features → `data/BTC_USD_1d_featured.csv`
+4. **Models**: Trained models saved to `models/` directory
+5. **Results**: Evaluation metrics and visualizations saved to `results/` directory (if exists)
+
+### Model Types
+
+- **Traditional ML**: Random Forest, Gradient Boosting, XGBoost, LightGBM, CatBoost
+- **Deep Learning**: LSTM, GRU, Bidirectional LSTM
+- **Ensemble**: Voting, Stacking, Blending ensembles
+- **Reinforcement Learning**: PPO, A2C (trading agents)
+
+## Testing
+
+Basic import testing is available:
+```bash
+python test_imports.py
+```
+
+This verifies that PyTorch and stable-baselines3 can be imported correctly.
+
+## Deployment
+
+No Docker configuration is currently provided. For production deployment:
+
+1. Ensure all dependencies are installed
+2. Configure data collection parameters in `config/config.py`
+3. Run the pipeline or individual stages as needed
+4. Monitor logs in `logs/` directory
+
+For cloud deployment (AWS, GCP, Azure), consider:
+- Using cloud storage for data and model artifacts
+- Setting up scheduled jobs for data collection
+- Using GPU instances for deep learning training
+
+## Troubleshooting
+
+**Data collection fails:**
+- Check internet connection
+- Verify data source APIs are accessible
+- Try specifying a different source: `--source binance` or `--source yfinance`
+- Check date ranges are valid
+
+**Model training errors:**
+- Ensure sufficient data is available (check `data/` directory)
+- Verify featured data exists before training
+- Check GPU availability for deep learning models (if using GPU)
+- Review logs in `logs/` directory
+
+**Import errors:**
+- Ensure virtual environment is activated
+- Reinstall dependencies: `pip install -r requirements.txt --upgrade`
+- For TA-Lib issues, use pandas-ta (already configured)
+
+**Memory issues:**
+- Reduce batch size in `config/config.py`
+- Use smaller date ranges for data collection
+- Process data in chunks if needed
+
+## Roadmap
+
+Potential improvements based on current implementation:
+
+- [ ] Add comprehensive unit and integration tests
+- [ ] Implement model versioning and experiment tracking (MLflow/Weights & Biases)
+- [ ] Add Docker containerization for easier deployment
+- [ ] Create API endpoint for real-time predictions
+- [ ] Add support for additional cryptocurrencies
+- [ ] Implement automated hyperparameter tuning
+- [ ] Add data validation and quality checks
+- [ ] Create interactive dashboard for model monitoring
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
