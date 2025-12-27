@@ -12,39 +12,18 @@ A machine learning pipeline for predicting Bitcoin prices using multiple data so
 
 ## Architecture
 
-```
-┌─────────────┐
-│ Data Sources│  (Binance, CCXT, CryptoCompare, Yahoo Finance)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Collector  │  → Raw Data (CSV)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ Preprocessor│  → Processed Data (CSV)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   Engineer  │  → Featured Data (CSV) [100+ features]
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   Training  │  → Models (PKL/H5)
-│  (Multiple) │     • Traditional ML
-│             │     • Deep Learning
-│             │     • Ensemble
-│             │     • Reinforcement Learning
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ Evaluation  │  → Metrics & Visualizations
-└─────────────┘
+```mermaid
+graph TD
+    A[Data Sources] -->|Binance/CCXT/CryptoCompare/Yahoo Finance| B[Collector]
+    B -->|Raw CSV| C[Preprocessor]
+    C -->|Processed CSV| D[Feature Engineer]
+    D -->|Featured CSV| E[Model Training]
+    E -->|Traditional ML| F[Models]
+    E -->|Deep Learning| F
+    E -->|Ensemble| F
+    E -->|Reinforcement Learning| F
+    F -->|PKL/H5 Files| G[Evaluator]
+    G -->|Metrics & Visualizations| H[Results]
 ```
 
 ## Key Features
@@ -78,17 +57,17 @@ bitcoin_prediction_project/
 ├── models/                     # Trained model files (.pkl, .h5)
 ├── logs/                       # Application logs
 ├── scripts/                    # Standalone execution scripts
-│   ├── collect_data.py
-│   ├── preprocess_data.py
 │   ├── engineer_features.py
-│   ├── train_models.py
 │   ├── evaluate_models.py
+│   ├── preprocess_data.py
+│   ├── train_models.py
 │   └── visualize_data.py
 ├── src/                        # Source code modules
 │   ├── data/
 │   │   ├── collector.py       # Data collection logic
 │   │   ├── preprocessor.py    # Data preprocessing
-│   │   └── engineer.py        # Feature engineering
+│   │   ├── engineer.py        # Feature engineering
+│   │   └── feature_selector.py
 │   ├── models/
 │   │   ├── traditional.py     # Traditional ML models
 │   │   ├── deep_learning.py    # LSTM, GRU models
@@ -102,6 +81,7 @@ bitcoin_prediction_project/
 ├── main.py                     # Main entry point
 ├── collect_data.py             # Data collection CLI
 ├── requirements.txt            # Python dependencies
+├── test_imports.py             # Import verification script
 └── README.md
 ```
 
@@ -205,6 +185,8 @@ Configuration is managed in `config/config.py`. Key parameters:
 | `EPOCHS` | `100` | Training epochs for deep learning |
 | `BATCH_SIZE` | `64` | Batch size for training |
 | `LEARNING_RATE` | `0.001` | Learning rate |
+| `RANDOM_STATE` | `42` | Random seed for reproducibility |
+| `EARLY_STOPPING_PATIENCE` | `10` | Early stopping patience for deep learning |
 
 Data sources are tried in order: Binance → CCXT → CryptoCompare → Yahoo Finance. No API keys required for default usage.
 
@@ -222,6 +204,23 @@ Data sources are tried in order: Binance → CCXT → CryptoCompare → Yahoo Fi
 - `--verbose`: Enable verbose logging
 - `--show_plots`: Display plots during visualization
 
+**collect_data.py** supports:
+- `--symbol`: Cryptocurrency symbol
+- `--quote`: Quote currency
+- `--interval`: Time interval
+- `--start_date`: Start date (YYYY-MM-DD)
+- `--end_date`: End date (YYYY-MM-DD)
+- `--output`: Output file path
+- `--source`: Specific data source (binance, ccxt, cryptocompare, yfinance)
+- `--verbose`: Enable verbose output
+
+**scripts/train_models.py** supports:
+- `--input`: Input data file path
+- `--target`: Target column to predict (default: close)
+- `--model-type`: Type of models (`all`, `traditional`, `deep-learning`, `ensemble`)
+- `--sequence-length`: Sequence length for sequential models (default: 10)
+- `--verbose`: Enable verbose output
+
 ### Data Flow
 
 1. **Raw Data**: Collected from exchanges → `data/BTC_USD_1d_raw.csv`
@@ -229,6 +228,7 @@ Data sources are tried in order: Binance → CCXT → CryptoCompare → Yahoo Fi
 3. **Featured Data**: With 100+ engineered features → `data/BTC_USD_1d_featured.csv`
 4. **Models**: Trained models saved to `models/` directory
 5. **Results**: Evaluation metrics and visualizations saved to `results/` directory (if exists)
+6. **Logs**: Application logs written to `logs/` directory
 
 ### Model Types
 
@@ -246,26 +246,12 @@ python test_imports.py
 
 This verifies that PyTorch and stable-baselines3 can be imported correctly.
 
-## Deployment
-
-No Docker configuration is currently provided. For production deployment:
-
-1. Ensure all dependencies are installed
-2. Configure data collection parameters in `config/config.py`
-3. Run the pipeline or individual stages as needed
-4. Monitor logs in `logs/` directory
-
-For cloud deployment (AWS, GCP, Azure), consider:
-- Using cloud storage for data and model artifacts
-- Setting up scheduled jobs for data collection
-- Using GPU instances for deep learning training
-
 ## Troubleshooting
 
 **Data collection fails:**
 - Check internet connection
 - Verify data source APIs are accessible
-- Try specifying a different source: `--source binance` or `--source yfinance`
+- Try specifying a different source: `python collect_data.py --source binance` or `--source yfinance`
 - Check date ranges are valid
 
 **Model training errors:**
@@ -283,19 +269,6 @@ For cloud deployment (AWS, GCP, Azure), consider:
 - Reduce batch size in `config/config.py`
 - Use smaller date ranges for data collection
 - Process data in chunks if needed
-
-## Roadmap
-
-Potential improvements based on current implementation:
-
-- [ ] Add comprehensive unit and integration tests
-- [ ] Implement model versioning and experiment tracking (MLflow/Weights & Biases)
-- [ ] Add Docker containerization for easier deployment
-- [ ] Create API endpoint for real-time predictions
-- [ ] Add support for additional cryptocurrencies
-- [ ] Implement automated hyperparameter tuning
-- [ ] Add data validation and quality checks
-- [ ] Create interactive dashboard for model monitoring
 
 ## License
 
